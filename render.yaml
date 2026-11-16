@@ -1,0 +1,12 @@
+# Render でまとめて設定するためのファイル（手動で設定する場合は使わなくてもOK）
+services:
+  - type: web
+    name: table-tennis-duel
+    runtime: node
+    plan: free
+    buildCommand: npm run build
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: CLIENT_ORIGIN
+        value: "*"
