@@ -182,8 +182,47 @@
     </div>
   </div>
 
-  <!-- Three.js（3Dを描くためのライブラリ） -->
+  <!-- 問題が起きたときに原因を表示する画面 -->
+  <div id="fatal" class="fatal hidden">
+    <div class="fatal-card">
+      <h2>ゲームを表示できませんでした</h2>
+      <p id="fatalText"></p>
+      <pre id="fatalDetail"></pre>
+      <p class="muted small">この画面をスクリーンショットして送ってもらえると、原因を調べられます</p>
+    </div>
+  </div>
+  <script>
+    // どこかでエラーが起きたら、画面に表示する（真っ暗のままにしない）
+    window.showFatal = function (text, detail) {
+      document.getElementById("fatalText").innerHTML = text;
+      document.getElementById("fatalDetail").textContent = detail || "";
+      document.getElementById("fatal").classList.remove("hidden");
+    };
+    window.addEventListener("error", function (e) {
+      if (!document.getElementById("fatal").classList.contains("hidden")) return; // すでに原因を表示中
+      showFatal("プログラムでエラーが起きました。", (e.message || "") + "\n" + (e.filename || "") + ":" + (e.lineno || ""));
+    });
+  </script>
+
+  <!-- Three.js（3Dを描くためのライブラリ）。読み込めなければ別の配布元から読み込む -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    if (typeof THREE === "undefined") {
+      document.write('<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"><\/script>');
+    }
+  </script>
+  <script>
+    if (typeof THREE === "undefined") {
+      document.write('<script src="https://unpkg.com/three@0.128.0/build/three.min.js"><\/script>');
+    }
+  </script>
+
+  <script>
+    if (typeof THREE === "undefined") {
+      showFatal("3D表示の部品（Three.js）を読み込めませんでした。",
+        "インターネットの接続を確認してください。\n学校や会社のネットワークでは、cdnjs.cloudflare.com などがブロックされていることがあります。");
+    }
+  </script>
 
   <!-- Socket.IO（サーバーと通信するライブラリ）。読み込めなければサーバーから読み込む -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>

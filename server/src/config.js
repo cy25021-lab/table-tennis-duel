@@ -24,4 +24,5 @@ module.exports = {
   publicServerUrl: process.env.PUBLIC_SERVER_URL || "",
   clientDir: path.join(__dirname, "..", "..", "client"),
   sharedDir: path.join(__dirname, "..", "..", "client", "js", "shared"),
+  skyhopDir: path.join(__dirname, "..", "..", "skyhop"), // SKY HOP RUN（障害物レース）の画面
 };

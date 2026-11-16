@@ -9,7 +9,45 @@
 
 // ----- 描画の準備 -----
 const container = document.getElementById("game");
-const renderer = new THREE.WebGLRenderer({ antialias: true });
+
+// このPC・ブラウザで3D表示（WebGL）が使えるか調べる
+function webglAvailable() {
+  try {
+    const c = document.createElement("canvas");
+    return !!(window.WebGLRenderingContext && (c.getContext("webgl") || c.getContext("experimental-webgl")));
+  } catch (e) {
+    return false;
+  }
+}
+
+const WEBGL_HELP =
+  "このPC・ブラウザでは3D表示（WebGL）が使えないようです。<br><br>" +
+  "① Chrome・Edge の設定 →「システム」→「<b>グラフィック アクセラレーションが使用可能な場合は使用する</b>」をオンにして、ブラウザを再起動<br>" +
+  "② ブラウザを最新版にする（または Chrome / Edge で開く）<br>" +
+  "③ それでも映らない場合は、PCのグラフィック機能が対応していない可能性があります";
+
+if (!webglAvailable()) {
+  showFatal(WEBGL_HELP, "WebGL: not available");
+  throw new Error("WebGL not available"); // ここで止める（原因は画面に表示済み）
+}
+
+let renderer;
+try {
+  renderer = new THREE.WebGLRenderer({ antialias: true });
+} catch (err) {
+  try {
+    renderer = new THREE.WebGLRenderer({ antialias: false }); // 軽い設定でもう一度
+  } catch (err2) {
+    showFatal(WEBGL_HELP, String(err2 && err2.message));
+    throw err2;
+  }
+}
+
+// 3D表示が途中で止まった（グラフィックの負担が大きすぎたときなど）
+renderer.domElement.addEventListener("webglcontextlost", e => {
+  e.preventDefault();
+  showFatal("3D表示が止まりました。ページを再読み込み（F5）してください。", "WebGL context lost");
+});
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;

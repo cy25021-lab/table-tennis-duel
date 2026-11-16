@@ -16,6 +16,8 @@ const config = require("./config");
 const { runSelfTest } = require("./selftest");
 const { RoomManager } = require("./rooms");
 const { GameRoom } = require("./gameRoom");
+const { startKeepAlive } = require("./keepAlive");
+const { setupRace } = require("./race/raceServer");
 
 const rooms = new RoomManager();
 const games = new Map(); // 部屋のコード → 試合（GameRoom）
@@ -33,7 +35,7 @@ app.get("/js/config.js", (req, res) => {
 
 // ----- 動作確認用のAPI -----
 app.get("/health", (req, res) => {
-  res.json({ ok: true, uptime: Math.round(process.uptime()), online: io.engine.clientsCount, rooms: rooms.rooms.size, games: games.size });
+  res.json({ ok: true, uptime: Math.round(process.uptime()), online: io.engine.clientsCount, rooms: rooms.rooms.size, games: games.size, raceRooms: raceRooms.rooms.size });
 });
 
 app.get("/api/selftest", (req, res) => {
@@ -42,6 +44,7 @@ app.get("/api/selftest", (req, res) => {
 
 // ----- 画面（client フォルダ）を配信 -----
 if (config.serveClient) {
+  app.use("/skyhop", express.static(config.skyhopDir)); // SKY HOP RUN は /skyhop/ で開く
   app.use(express.static(config.clientDir));
 }
 
@@ -52,6 +55,9 @@ const io = new Server(server, {
   pingInterval: 10000, // 10秒ごとに生きているか確認
   pingTimeout: 8000,
 });
+
+// SKY HOP RUN（障害物レース）のオンライン対戦（通り道 /race）
+const raceRooms = setupRace(io);
 
 // 部屋のみんなに、部屋の最新の状態を送る
 function broadcastRoom(room) {
@@ -247,4 +253,5 @@ server.listen(config.port, () => {
   console.log(` ブラウザで開く：http://localhost:${config.port}`);
   console.log(` 動作確認：     http://localhost:${config.port}/api/selftest`);
   console.log("==============================================");
+  startKeepAlive(); // 公開サービス（Render）では、眠らないように自分にアクセスし続ける
 });
