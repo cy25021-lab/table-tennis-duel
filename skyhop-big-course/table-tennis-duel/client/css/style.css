@@ -1,0 +1,814 @@
+/* ===== ページ全体 ===== */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #0d1117;
+  font-family: "Helvetica Neue", "Hiragino Sans", "Yu Gothic", sans-serif;
+  color: #ffffff;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#game {
+  position: fixed;
+  inset: 0;
+}
+
+/* ===== 画面に重ねる表示 ===== */
+.hud {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+.hud.hidden .panel {
+  display: none;
+}
+
+.brand {
+  position: absolute;
+  top: 20px;
+  left: 24px;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 3px;
+}
+
+.brand span {
+  color: #ff8c1a;
+}
+
+.step-badge {
+  position: absolute;
+  top: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 16px;
+  font-size: 13px;
+  letter-spacing: 1px;
+  background: rgba(13, 17, 23, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 999px;
+  backdrop-filter: blur(6px);
+}
+
+.panel {
+  position: absolute;
+  left: 24px;
+  bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px 18px;
+  font-size: 13px;
+  background: rgba(13, 17, 23, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  backdrop-filter: blur(6px);
+}
+
+.panel-title {
+  margin-bottom: 2px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #ff8c1a;
+}
+
+kbd {
+  display: inline-block;
+  min-width: 26px;
+  margin-right: 8px;
+  padding: 1px 6px;
+  font-family: inherit;
+  font-size: 12px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 5px;
+}
+
+.side-label {
+  position: absolute;
+  right: 24px;
+  bottom: 24px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  background: rgba(255, 140, 26, 0.85);
+  border-radius: 8px;
+}
+
+.panel-title.sub {
+  margin-top: 8px;
+}
+
+/* ===== 設定ボタン（右上） ===== */
+.icon-btn {
+  position: absolute;
+  top: 16px;
+  right: 24px;
+  padding: 8px 16px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+  background: rgba(13, 17, 23, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  cursor: pointer;
+  pointer-events: auto;
+  backdrop-filter: blur(6px);
+}
+
+.icon-btn:hover {
+  background: rgba(255, 140, 26, 0.85);
+}
+
+/* ===== スイングの強さのメーター（下の真ん中） ===== */
+.power {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 260px;
+}
+
+.power-text {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.power-bar {
+  width: 100%;
+  height: 10px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+}
+
+.power-fill {
+  width: 0;
+  height: 100%;
+  background: linear-gradient(90deg, #ffd166, #ff8c1a, #ff3b3b);
+  border-radius: 999px;
+  transition: width 0.05s linear;
+}
+
+.power-fill.max {
+  box-shadow: 0 0 12px #ff3b3b;
+}
+
+.mode-text {
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+/* ===== 設定画面 ===== */
+.modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 8, 14, 0.55);
+  backdrop-filter: blur(4px);
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-card {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: min(420px, 90vw);
+  padding: 28px 30px;
+  background: #151b26;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.modal-card h2 {
+  margin: 0;
+  font-size: 20px;
+  letter-spacing: 3px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.field b {
+  color: #ff8c1a;
+}
+
+.field select {
+  padding: 9px 10px;
+  font-family: inherit;
+  font-size: 14px;
+  color: #ffffff;
+  background: #0d1117;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+}
+
+.field input[type="range"] {
+  accent-color: #ff8c1a;
+}
+
+.primary-btn {
+  padding: 12px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #ffffff;
+  background: #ff8c1a;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.primary-btn:hover {
+  filter: brightness(1.1);
+}
+
+/* ===== スコアボード（上の真ん中） ===== */
+.scoreboard {
+  position: absolute;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 10px 22px;
+  background: rgba(13, 17, 23, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 14px;
+  backdrop-filter: blur(6px);
+}
+
+.scoreboard .player {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 70px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.scoreboard .player.opp {
+  justify-content: flex-end;
+}
+
+.scoreboard .score {
+  font-size: 34px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.scoreboard .score i {
+  margin: 0 10px;
+  font-style: normal;
+  opacity: 0.4;
+}
+
+/* サーブ権の印 */
+.serve-dot {
+  width: 10px;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+}
+
+.serve-dot.on {
+  background: #ff8c1a;
+  box-shadow: 0 0 8px #ff8c1a;
+}
+
+.hint {
+  position: absolute;
+  top: 128px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 13px;
+  color: #ffd166;
+  white-space: nowrap;
+}
+
+/* 得点などのメッセージ */
+.message {
+  position: absolute;
+  top: 38%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.9);
+  font-size: 44px;
+  font-weight: 800;
+  letter-spacing: 4px;
+  text-align: center;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.message small {
+  display: block;
+  margin-top: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: #ffd166;
+}
+
+.message.show {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* 試合終了画面 */
+.modal-card.center {
+  align-items: center;
+  text-align: center;
+}
+
+.final-score {
+  font-size: 48px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ===== サーバーとの接続状態（右上・設定ボタンの下） ===== */
+.net-badge {
+  position: absolute;
+  top: 58px;
+  right: 24px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  font-size: 12px;
+  background: rgba(13, 17, 23, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 999px;
+  pointer-events: auto;
+  backdrop-filter: blur(6px);
+}
+
+.net-dot {
+  width: 9px;
+  height: 9px;
+  background: #8b949e;
+  border-radius: 50%;
+}
+
+.net-badge.online .net-dot {
+  background: #3fb950;
+  box-shadow: 0 0 8px #3fb950;
+}
+
+.net-badge.connecting .net-dot,
+.net-badge.reconnecting .net-dot {
+  background: #d29922;
+  animation: blink 0.8s infinite alternate;
+}
+
+.net-badge.offline .net-dot {
+  background: #f85149;
+}
+
+@keyframes blink {
+  from { opacity: 1; }
+  to   { opacity: 0.3; }
+}
+
+/* ===== モードごとの表示の切り替え ===== */
+body[data-mode="menu"] .scoreboard,
+body[data-mode="menu"] .hint,
+body[data-mode="menu"] .panel,
+body[data-mode="menu"] .power,
+body[data-mode="menu"] .menu-btn,
+body[data-mode="menu"] .online-banner,
+body[data-mode="menu"] .icon-btn,
+body[data-mode="practice"] .online-banner {
+  display: none;
+}
+
+.menu-btn {
+  position: absolute;
+  top: 50px;
+  left: 24px;
+  padding: 6px 14px;
+  font-family: inherit;
+  font-size: 12px;
+  color: #ffffff;
+  background: rgba(13, 17, 23, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.menu-btn:hover {
+  background: rgba(255, 140, 26, 0.85);
+}
+
+.online-banner {
+  position: absolute;
+  top: 62px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 20px;
+  font-size: 12px;
+  text-align: center;
+  background: rgba(13, 17, 23, 0.72);
+  border: 1px solid rgba(255, 140, 26, 0.6);
+  border-radius: 12px;
+}
+
+.online-banner b {
+  font-size: 15px;
+  letter-spacing: 1px;
+  color: #ff8c1a;
+}
+
+/* ===== タイトル・部屋の画面 ===== */
+.screen {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at center, rgba(5, 8, 14, 0.35), rgba(5, 8, 14, 0.75));
+}
+
+.screen.hidden {
+  display: none;
+}
+
+.screen-card {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 14px;
+  width: min(400px, 92vw);
+  padding: 30px 32px;
+  text-align: center;
+  background: rgba(21, 27, 38, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(8px);
+}
+
+.screen-card.wide {
+  width: min(520px, 92vw);
+}
+
+.screen-card h2 {
+  margin: 0;
+  font-size: 22px;
+  letter-spacing: 3px;
+}
+
+.logo {
+  font-size: clamp(28px, 6vw, 40px);
+  font-weight: 900;
+  letter-spacing: 4px;
+}
+
+.logo span {
+  color: #ff8c1a;
+}
+
+.tagline,
+.muted {
+  margin: 0;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.muted.small {
+  font-size: 11px;
+}
+
+.muted b {
+  color: #ffffff;
+  letter-spacing: 2px;
+}
+
+.screen-card .field {
+  text-align: left;
+}
+
+.screen-card input[type="text"] {
+  padding: 11px 12px;
+  font-family: inherit;
+  font-size: 16px;
+  color: #ffffff;
+  background: #0d1117;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  outline: none;
+}
+
+.screen-card input[type="text"]:focus {
+  border-color: #ff8c1a;
+}
+
+.btn-row {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-row > * {
+  flex: 1;
+}
+
+.primary-btn.outline {
+  color: #ff8c1a;
+  background: transparent;
+  border: 2px solid #ff8c1a;
+}
+
+.primary-btn.big {
+  padding: 16px;
+  font-size: 18px;
+}
+
+.primary-btn.is-ready {
+  background: #3fb950;
+}
+
+.primary-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.ghost-btn {
+  padding: 10px;
+  font-family: inherit;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.75);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.ghost-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.notice {
+  margin: 0;
+  padding: 8px 12px;
+  font-size: 13px;
+  color: #ffd166;
+  background: rgba(255, 209, 102, 0.1);
+  border-radius: 8px;
+}
+
+.notice.hidden {
+  display: none;
+}
+
+.error {
+  min-height: 18px;
+  margin: 0;
+  font-size: 13px;
+  color: #ff6b6b;
+}
+
+.server-line {
+  margin: 0;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* ルームコード */
+.room-code {
+  margin: 6px 0;
+  font-size: 56px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 8px;
+  color: #ff8c1a;
+  text-shadow: 0 0 30px rgba(255, 140, 26, 0.35);
+  user-select: all;
+}
+
+.code-input {
+  font-size: 34px !important;
+  font-weight: 800;
+  text-align: center;
+  letter-spacing: 12px;
+}
+
+.waiting {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 14px;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-top-color: #ff8c1a;
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* 対戦準備のプレイヤーカード */
+.cards {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.player-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+}
+
+.player-card.me {
+  border-color: rgba(255, 140, 26, 0.6);
+}
+
+.pc-side {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.pc-name {
+  font-size: 17px;
+  font-weight: 700;
+  word-break: break-all;
+}
+
+.pc-conn {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.pc-conn.ok {
+  color: #3fb950;
+}
+
+.pc-conn.ng {
+  color: #ff6b6b;
+}
+
+.pc-ready {
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.pc-ready.ok {
+  color: #3fb950;
+}
+
+.vs {
+  font-size: 18px;
+  font-weight: 900;
+  color: #ff8c1a;
+}
+
+
+/* ===== STEP 7：演出 ===== */
+
+/* 操作説明は自動で隠す（H キーで出し入れ） */
+.hud.help-hidden .panel {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.panel {
+  transition: opacity 0.6s, transform 0.6s;
+}
+
+/* 点数が入ったときのポン */
+.scoreboard .score span.bump {
+  display: inline-block;
+  animation: bump 0.5s ease-out;
+}
+
+@keyframes bump {
+  0%   { transform: scale(1); color: #ffffff; }
+  30%  { transform: scale(1.6); color: #ff8c1a; }
+  100% { transform: scale(1); color: #ffffff; }
+}
+
+/* 3・2・1・GO! */
+.countdown {
+  position: absolute;
+  top: 42%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 140px;
+  font-weight: 900;
+  color: #ffffff;
+  text-shadow: 0 0 40px rgba(255, 140, 26, 0.8), 0 8px 30px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+
+.countdown.pop {
+  animation: countPop 0.7s ease-out;
+}
+
+@keyframes countPop {
+  0%   { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+  30%  { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(0.9); opacity: 1; }
+}
+
+/* メッセージに少し勢いをつける */
+.message.show {
+  animation: msgIn 0.35s cubic-bezier(0.2, 1.4, 0.4, 1);
+}
+
+@keyframes msgIn {
+  from { transform: translate(-50%, -50%) scale(0.6); opacity: 0; }
+  to   { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+
+/* ===== 問題が起きたときの画面 ===== */
+.fatal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0d1117;
+}
+
+.fatal.hidden {
+  display: none;
+}
+
+.fatal-card {
+  width: min(560px, 92vw);
+  padding: 28px 30px;
+  font-size: 14px;
+  line-height: 1.8;
+  background: #151b26;
+  border: 1px solid rgba(255, 107, 107, 0.5);
+  border-radius: 16px;
+}
+
+.fatal-card h2 {
+  margin: 0 0 10px;
+  font-size: 20px;
+  color: #ff6b6b;
+}
+
+.fatal-card pre {
+  padding: 10px;
+  font-size: 12px;
+  white-space: pre-wrap;
+  color: #ffd166;
+  background: #0d1117;
+  border-radius: 8px;
+}

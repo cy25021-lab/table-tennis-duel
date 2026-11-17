@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SKY HOP RUN</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- 3Dの画面はここに入る -->
+  <div id="game"></div>
+
+  <!-- 画面の上に重ねる表示（HUD） -->
+  <div class="hud">
+    <div class="hud-title">SKY HOP RUN</div>
+
+    <!-- 上の真ん中：タイマーと進み具合 -->
+    <div class="top-center">
+      <div id="timer" class="timer">00:00.00</div>
+      <div class="progress">
+        <div id="progressFill" class="progress-fill"></div>
+        <div id="progressMarks"></div>
+        <div class="progress-goal">GOAL</div>
+        <div id="progressPlayer" class="progress-player"></div>
+      </div>
+    </div>
+
+    <!-- 右上：チェックポイントと落下回数 -->
+    <div class="stats">
+      <div>順位 <b id="rank">1 / 6</b></div>
+      <div>CHECKPOINT <b id="cpCount">0 / 3</b></div>
+      <div>落下 <b id="fallCount">0</b></div>
+    </div>
+
+    <div id="mouseHint" class="mouse-hint hidden">画面をクリックすると、マウスでカメラを回せます</div>
+
+    <!-- 左下：操作方法 -->
+    <div class="controls">
+      <div><b>WASD / ↑↓←→</b> 移動</div>
+      <div><b>Space</b> ジャンプ</div>
+      <div><b>Shift</b> ダッシュ</div>
+      <div><b>マウス</b> カメラ</div>
+      <div><b>ホイール</b> ズーム</div>
+      <div><b>R</b> 最初から</div>
+      <div><b>M</b> 音 ON/OFF</div>
+    </div>
+
+    <div id="countdown" class="countdown"></div>
+    <div id="toast" class="toast"></div>
+  </div>
+
+  <!-- スタート画面 -->
+  <div id="startScreen" class="overlay">
+    <h1>SKY HOP RUN</h1>
+    <p class="sub">空に浮かぶ障害物コースをかけぬけろ！ CPUと競争、または友達と最大8人でオンライン対戦</p>
+    <p id="titleBest" class="best"></p>
+    <div class="mode-buttons">
+      <button id="startBtn" class="btn">ひとりで（CPUと）</button>
+      <button id="btnOnline" class="btn btn-blue">みんなで（オンライン）</button>
+    </div>
+    <p class="small">Esc キーでマウスの固定を解除できます</p>
+  </div>
+
+  <!-- オンライン対戦の画面 -->
+  <div id="onlinePanel" class="overlay hidden">
+    <div class="online-card">
+      <h2>みんなでレース</h2>
+      <p id="onlineStatus" class="online-status">サーバーに接続中…</p>
+
+      <!-- 部屋に入る前 -->
+      <div id="onlineEntry">
+        <label class="o-field">あなたの名前
+          <input id="onlineName" type="text" maxlength="12" placeholder="PLAYER" autocomplete="off">
+        </label>
+        <button id="btnRoomCreate" class="btn">部屋を作る</button>
+        <div class="o-or">または、コードを入れて参加</div>
+        <div class="o-join">
+          <input id="roomCodeInput" type="text" inputmode="numeric" maxlength="6" placeholder="123456" autocomplete="off">
+          <button id="btnRoomJoin" class="btn btn-blue">参加</button>
+        </div>
+        <button id="btnOnlineBack" class="o-link">← もどる</button>
+      </div>
+
+      <!-- 部屋の中（待合室） -->
+      <div id="onlineRoom" class="hidden">
+        <div class="o-code-label">ルームコード</div>
+        <div id="roomCodeShow" class="o-code">000 000</div>
+        <button id="btnCopyCode" class="o-link">コードをコピー</button>
+        <div class="o-players-head">参加者 <b id="roomCount">1 / 8 人</b></div>
+        <ul id="roomPlayers" class="o-players"></ul>
+        <p id="roomWaitText" class="o-wait"></p>
+        <button id="btnRaceStart" class="btn">スタート！</button>
+        <button id="btnRoomLeave" class="o-link">部屋を出る</button>
+      </div>
+      <p id="onlineError" class="o-error"></p>
+    </div>
+  </div>
+
+  <!-- 結果画面 -->
+  <div id="resultScreen" class="overlay hidden">
+    <div class="result-card">
+      <h2>CLEAR!</h2>
+      <div class="result-label">クリアタイム</div>
+      <div id="resultTime" class="result-time">00:00.00</div>
+      <div id="newRecord" class="new-record hidden">NEW RECORD!</div>
+      <ol id="rankList" class="rank-list"></ol>
+      <div class="result-rows">
+        <div>落下回数 <b id="resultFalls">0 回</b></div>
+        <div>ベスト <b id="resultBest">00:00.00</b></div>
+      </div>
+      <button id="retryBtn" class="btn">もう一度あそぶ</button>
+      <p class="small">R キーでもやり直せます</p>
+    </div>
+  </div>
+
+  <!-- Socket.IO（オンライン対戦の通信）。サーバーから開いたときは、サーバーからも読み込める -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+  <script>
+    if (typeof io === "undefined" && location.protocol !== "file:") {
+      document.write('<script src="/socket.io/socket.io.js"><\/script>');
+    }
+  </script>
+
+  <!-- Three.js（3Dを描くためのライブラリ）をインターネットから読み込む -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <!-- 自分で書いたプログラム（読み込む順番が大事） -->
+  <script src="js/sound.js"></script>
+  <script src="js/input.js"></script>
+  <script src="js/world.js"></script>
+  <script src="js/obstacles.js"></script>
+  <script src="js/course.js"></script>
+  <script src="js/player.js"></script>
+  <script src="js/bots.js"></script>
+  <script src="js/camera.js"></script>
+  <script src="js/effects.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/online.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
