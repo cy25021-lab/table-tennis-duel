@@ -4,8 +4,8 @@
 
 const CameraController = {
   yaw: 0,          // 横の回転（0 = キャラの後ろ）
-  pitch: 0.35,     // 縦の角度（大きいほど上から見下ろす）
-  distance: 8,     // キャラからの距離
+  pitch: 0.28,     // 縦の角度（大きいほど上から見下ろす）
+  distance: 7.5,     // キャラからの距離
   sensitivity: 0.0025, // マウス感度
   lookTarget: new THREE.Vector3(),
   ready: false,

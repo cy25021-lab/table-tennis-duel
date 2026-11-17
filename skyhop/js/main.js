@@ -12,7 +12,7 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 container.appendChild(renderer.domElement);
 
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 500);
+const camera = new THREE.PerspectiveCamera(72, window.innerWidth / window.innerHeight, 0.1, 1200); // 広い視野で、コースを大きく見せる
 
 // ----- 2. 世界・コース・キャラクター・演出を作る -----
 const world = World.create(scene);

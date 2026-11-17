@@ -161,75 +161,86 @@ const Course = {
     const V = (x, y, z) => new THREE.Vector3(x, y, z);
 
     // ===== スタート =====
-    W.addIsland(scene, 0, 0, 0, 16, 16, 0x7ed957);
-    new Arch(scene, W, 0, 0, -6, 8, 0xff5fa2, () => makeLabel("START", "#ff5fa2", "#ffffff", 5, 1.25));
-    W.addTree(scene, -6, 0, 5);
-    W.addTree(scene, 6, 0, 3);
+    W.addIsland(scene, 0, 0, 0, 30, 20, 0x7ed957);
+    W.addRails(scene, 0, 0, 0, 30, 20, "start");
+    new Arch(scene, W, 0, 0, -8, 18, 0xff5fa2, () => makeLabel("START", "#ff5fa2", "#ffffff", 5, 1.25));
+    W.addTree(scene, -11, 0, 5);
+    W.addTree(scene, 11, 0, 3);
+    W.addTree(scene, -12, 0, -4);
+    W.addTree(scene, 12, 0, -5);
 
     // ===== ① 準備運動：足場ジャンプ =====
-    W.addBlock(scene, 0, 0, -11, 4, 1, 4, 0xff7aa8);
-    W.addBlock(scene, -2, 0.8, -16, 4, 1, 4, 0xffd23f);
-    W.addBlock(scene, 2, 1.6, -21, 4, 1, 4, 0x5ccfe6);
-    W.addBlock(scene, 0, 2.4, -26, 4, 1, 4, 0xb48cff);
+    W.addBlock(scene, 0, 0, -13, 14, 1, 4, 0xff7aa8);
+    W.addBlock(scene, -2, 0.8, -18, 14, 1, 4, 0xffd23f);
+    W.addBlock(scene, 2, 1.6, -23, 14, 1, 4, 0x5ccfe6);
+    W.addBlock(scene, 0, 2.4, -27.5, 14, 1, 3, 0xb48cff);
 
     // ===== ② ゆっくり回るハンマー =====
-    W.addBlock(scene, 0, 2.4, -37, 12, 1.2, 14, 0xffd23f);
-    const hammer1 = O.add(new Hammer(scene, W, V(0, 2.4, -37), 4.5, 1.0));
+    W.addBlock(scene, 0, 2.4, -37, 18, 1.2, 14, 0xffd23f);
+    const hammer1 = O.add(new Hammer(scene, W, V(0, 2.4, -37), 4.5, 1.0, 3.2));
 
     // ===== CP1 =====
-    W.addIsland(scene, 0, 2.4, -50, 12, 10, 0x7ed957);
-    this.addCheckpoint(scene, W, 1, 0, 2.4, -47, 7);
+    W.addIsland(scene, 0, 2.4, -50, 24, 10, 0x7ed957);
+    W.addRails(scene, 0, 2.4, -50, 24, 10, "sides");
+    this.addCheckpoint(scene, W, 1, 0, 2.4, -47, 14);
 
     // ===== ③ 動く足場 =====
-    const plat1 = O.add(new MovingPlatform(scene, W, V(-3.5, 2.4, -59.25), V(3.5, 2.4, -59.25), 3.5, 0.9, 0x5ccfe6));
-    const plat2 = O.add(new MovingPlatform(scene, W, V(3.5, 2.4, -65), V(-3.5, 2.4, -65), 3.5, 1.0, 0xb48cff));
-    const plat3 = O.add(new MovingPlatform(scene, W, V(-3.5, 2.4, -70.75), V(3.5, 2.4, -70.75), 3.5, 1.1, 0xff7aa8));
-    W.addBlock(scene, 0, 2.4, -77, 8, 1.2, 8, 0xffa94d);
+    const plat1 = O.add(new MovingPlatform(scene, W, V(-3.5, 2.4, -59.25), V(3.5, 2.4, -59.25), 5, 0.9, 0x5ccfe6));
+    const plat2 = O.add(new MovingPlatform(scene, W, V(3.5, 2.4, -65), V(-3.5, 2.4, -65), 5, 1.0, 0xb48cff));
+    const plat3 = O.add(new MovingPlatform(scene, W, V(-3.5, 2.4, -70.75), V(3.5, 2.4, -70.75), 5, 1.1, 0xff7aa8));
+    W.addBlock(scene, 0, 2.4, -77, 18, 1.2, 8, 0xffa94d);
 
     // ===== ④ 動く壁の橋 =====
-    W.addBlock(scene, 0, 2.4, -92, 6, 1, 20, 0xffd23f);
-    const pusher1 = O.add(new Pusher(scene, W, 0, 2.4, -86, 2.4, 1.8, 0));
-    const pusher2 = O.add(new Pusher(scene, W, 0, 2.4, -91, 2.4, 1.8, 1.2));
-    const pusher3 = O.add(new Pusher(scene, W, 0, 2.4, -96, 2.4, 1.8, 2.4));
+    W.addBlock(scene, 0, 2.4, -92, 14, 1, 20, 0xffd23f);
+    W.addRails(scene, 0, 2.4, -92, 14, 20, "sides");
+    const pusher1 = O.add(new Pusher(scene, W, 0, 2.4, -86, 4.2, 1.6, 0, 4));
+    const pusher2 = O.add(new Pusher(scene, W, 0, 2.4, -91, 4.2, 1.6, 1.2, 4));
+    const pusher3 = O.add(new Pusher(scene, W, 0, 2.4, -96, 4.2, 1.6, 2.4, 4));
 
     // ===== CP2 =====
-    W.addIsland(scene, 0, 2.4, -110, 12, 12, 0x7ed957);
-    this.addCheckpoint(scene, W, 2, 0, 2.4, -106, 7);
-    W.addTree(scene, -4.5, 2.4, -113);
+    W.addIsland(scene, 0, 2.4, -110, 24, 12, 0x7ed957);
+    W.addRails(scene, 0, 2.4, -110, 24, 12, "sides");
+    this.addCheckpoint(scene, W, 2, 0, 2.4, -106, 14);
+    W.addTree(scene, -9, 2.4, -113);
+    W.addTree(scene, 9, 2.4, -112);
 
     // ===== ⑤ 落ちる床（4列 × 5行） =====
     for (let row = 0; row < 5; row++) {
-      for (let col = 0; col < 4; col++) {
-        O.add(new FallingTile(scene, W, -3.75 + col * 2.5, 2.4, -118.3 - row * 2.5, 2.4));
+      for (let col = 0; col < 7; col++) {
+        O.add(new FallingTile(scene, W, -7.5 + col * 2.5, 2.4, -118.3 - row * 2.5, 2.4));
       }
     }
-    W.addBlock(scene, 0, 2.4, -134, 8, 1.2, 8, 0xffa94d);
+    W.addBlock(scene, 0, 2.4, -134, 18, 1.2, 8, 0xffa94d);
 
     // ===== ⑥ 滑る坂道 → 速いハンマー =====
-    W.addRamp(scene, 0, 7, -138, 2.4, -158, -4, 16, 0x9be7ff);
-    W.addBlock(scene, 0, -4, -167, 14, 1.2, 18, 0xff7aa8);
-    const hammer2 = O.add(new Hammer(scene, W, V(0, -4, -167), 5, 1.8));
+    W.addRamp(scene, 0, 16, -138, 2.4, -158, -4, 16, 0x9be7ff);
+    W.addBlock(scene, 0, -4, -167, 18, 1.2, 18, 0xff7aa8);
+    const hammer2 = O.add(new Hammer(scene, W, V(0, -4, -167), 5, 1.8, 3.6));
 
     // ===== CP3 =====
-    W.addIsland(scene, 0, -4, -184, 12, 12, 0x7ed957);
-    this.addCheckpoint(scene, W, 3, 0, -4, -180, 7);
+    W.addIsland(scene, 0, -4, -184, 24, 12, 0x7ed957);
+    W.addRails(scene, 0, -4, -184, 24, 12, "sides");
+    this.addCheckpoint(scene, W, 3, 0, -4, -180, 14);
 
     // ===== ⑦ ラストスパート =====
     // 小さな動く足場
-    const plat4 = O.add(new MovingPlatform(scene, W, V(-3, -3, -194), V(3, -3, -194), 3, 1.3, 0x5ccfe6));
+    const plat4 = O.add(new MovingPlatform(scene, W, V(-3, -3, -194), V(3, -3, -194), 4.5, 1.3, 0x5ccfe6));
     // 落ちる床の一本道
     for (let i = 0; i < 3; i++) {
-      O.add(new FallingTile(scene, W, 0, -2, -199 - i * 2.5, 2.4));
+      [-2.5, 0, 2.5].forEach(x => O.add(new FallingTile(scene, W, x, -2, -199 - i * 2.5, 2.4)));
     }
     // 上下に動くエレベーター
-    const elevator = O.add(new MovingPlatform(scene, W, V(0, -2, -209), V(0, 4, -209), 3.5, 0.9, 0xb48cff));
+    const elevator = O.add(new MovingPlatform(scene, W, V(0, -2, -209), V(0, 4, -209), 6, 0.9, 0xb48cff));
 
     // ===== ゴール =====
-    W.addIsland(scene, 0, 4, -219, 16, 14, 0xffd23f);
-    this.goalArch = new Arch(scene, W, 0, 4, -219, 9, 0xff5fa2, () => makeLabel("GOAL", "#ffe45c", "#ff5fa2", 5, 1.25));
-    this.goal = { x: 0, y: 4, z: -219, width: 9 };
-    W.addTree(scene, -6, 4, -224);
-    W.addTree(scene, 6, 4, -224);
+    W.addIsland(scene, 0, 4, -221, 32, 18, 0xffd23f);
+    W.addRails(scene, 0, 4, -221, 32, 18, "goal");
+    this.goalArch = new Arch(scene, W, 0, 4, -219, 18, 0xff5fa2, () => makeLabel("GOAL", "#ffe45c", "#ff5fa2", 5, 1.25));
+    this.goal = { x: 0, y: 4, z: -219, width: 18 };
+    W.addTree(scene, -12, 4, -226);
+    W.addTree(scene, 12, 4, -226);
+    W.addTree(scene, -13, 4, -217);
+    W.addTree(scene, 13, 4, -217);
 
     // ===== CPU用の道しるべ =====
     this.buildWaypoints({ hammer1, hammer2, plat1, plat2, plat3, plat4, elevator, pusher1, pusher2, pusher3 });
@@ -248,15 +259,15 @@ const Course = {
   buildWaypoints(o) {
     const wp = (x, z, opts) => Object.assign({ x: x, z: z, radius: 0.8, margin: 0.6 }, opts || {});
     const onPlatform = (plat, opts) => Object.assign(wp(0, plat.from.z), { follow: plat }, opts || {});
-    const pusherClear = p => () => [0, 0.2, 0.4, 0.6].every(t => Math.abs(p.xAt(t)) > 1.75);
+    const pusherClear = p => () => [0, 0.2, 0.4, 0.6].every(t => Math.abs(p.xAt(t)) > 2.8);
 
     this.waypoints = [
       // スタート → 準備運動
-      wp(0, -7, { lane: true }),
-      wp(0, -11, { lane: true }),
-      wp(-2, -16, { lane: true }),
-      wp(2, -21, { lane: true }),
-      wp(0, -26, { lane: true }),
+      wp(0, -9, { lane: true }),
+      wp(0, -13, { lane: true }),
+      wp(-2, -18, { lane: true }),
+      wp(2, -23, { lane: true }),
+      wp(0, -27.5, { lane: true }),
       // ハンマー①：輪の外で待つ → 柱の近く（安全地帯）→ 出口で待つ → 抜ける
       wp(0, -31, { waitUntil: () => o.hammer1.timeUntilHit(0.6, -32.6) > 0.8 }),
       wp(1.3, -34.4),
@@ -296,7 +307,7 @@ const Course = {
       wp(0, -204, { careful: true, margin: -0.3 }),
       onPlatform(o.elevator, { careful: true, radius: 1.2, waitUntil: () => o.elevator.positionAt(0).y > 3.6 }),
       wp(0, -214),
-      wp(0, -223, { lane: true }),
+      wp(0, -224, { lane: true }),
     ];
   },
 

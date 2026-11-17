@@ -19,13 +19,13 @@ const toonMat = (color, extra) =>
 //     中心の柱のまわりを、ハンマーの頭がぐるぐる回る
 // -----------------------------------------------------
 class Hammer {
-  constructor(scene, world, center, radius, speed) {
+  constructor(scene, world, center, radius, speed, headLength) {
     this.center = center.clone(); // 柱の根元（足場の上の面）
     this.radius = radius;         // 柱からハンマーの頭までの距離
     this.speed = speed;           // 回る速さ（ラジアン/秒）
     this.angle = 0;
     this.headRadius = 0.8;        // 頭の太さ
-    this.headLength = 2.2;        // 頭の長さ
+    this.headLength = headLength || 2.2; // 頭の長さ
     this.headHeight = 0.95;       // 頭の高さ（足場からの高さ）
 
     // 柱（ぶつかる）
@@ -139,13 +139,13 @@ class Hammer {
 //  2. 左右に動く壁（ぶつかるとはじき飛ばされる）
 // -----------------------------------------------------
 class Pusher {
-  constructor(scene, world, x, topY, z, range, speed, phase) {
+  constructor(scene, world, x, topY, z, range, speed, phase, width) {
     this.baseX = x;
     this.range = range;  // 左右に動く幅（片側）
     this.speed = speed;
     this.phase = phase;  // 動き出すタイミングをずらす
     this.time = phase;
-    this.w = 2.2;
+    this.w = width || 2.2;
     this.h = 1.8;
     this.d = 1.2;
     this.y = topY;
@@ -156,7 +156,7 @@ class Pusher {
     block.castShadow = true;
     this.mesh.add(block);
     // 白いしま模様
-    for (let i = -1; i <= 1; i++) {
+    for (let i = -Math.floor(this.w / 1.4); i <= Math.floor(this.w / 1.4); i++) {
       const stripe = new THREE.Mesh(new THREE.BoxGeometry(0.3, this.h + 0.02, this.d + 0.02), toonMat(0xffffff));
       stripe.position.x = i * 0.7;
       this.mesh.add(stripe);
