@@ -1,0 +1,13 @@
+{
+  "name": "table-tennis-duel",
+  "version": "1.0.0",
+  "private": true,
+  "description": "TABLE TENNIS DUEL（3Dオンライン卓球）。公開サービスはこのファイルを見て起動する",
+  "scripts": {
+    "build": "npm install --prefix server",
+    "start": "node server/src/index.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
